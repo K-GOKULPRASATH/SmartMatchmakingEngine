@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { runMatchingAlgorithm, type AlgorithmState } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Loader2, Rocket } from "lucide-react";
@@ -28,7 +29,10 @@ function SubmitButton() {
 }
 
 export default function Dashboard() {
-  const [state, formAction] = useFormState(runMatchingAlgorithm, initialState);
+  const [state, formAction] = useActionState(
+    runMatchingAlgorithm,
+    initialState
+  );
 
   return (
     <div className="space-y-8">
