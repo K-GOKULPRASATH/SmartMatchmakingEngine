@@ -81,8 +81,8 @@ export default function CandidateDetailModal({
                 <User className="h-5 w-5" /> Candidate Info
               </h3>
               <div className="space-y-1 text-sm">
-                <p>
-                  <strong>Category:</strong>{" "}
+                <div className="flex items-center gap-2">
+                  <strong>Category:</strong>
                   <Badge
                     variant={
                       student.category === "GEN" ? "secondary" : "outline"
@@ -90,7 +90,7 @@ export default function CandidateDetailModal({
                   >
                     {student.category}
                   </Badge>
-                </p>
+                </div>
                 <p>
                   <strong>Location:</strong> {student.location}
                 </p>
