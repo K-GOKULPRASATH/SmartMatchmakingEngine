@@ -22,9 +22,12 @@ export default function UnmatchedStudentCard({ student }: UnmatchedStudentCardPr
     const fetchFeedback = async () => {
       setIsLoading(true);
       try {
-        const companyRequirements = companies.map(c => `${c.title}: ${c.req}`).join('\n');
+        const companyRequirements = companies
+          .map(c => `Sector: ${c.sector}, Title: ${c.title}, Skills: ${c.req}`)
+          .join('\n');
         const result = await generateSkillGapFeedback({
           studentSkills: student.skills,
+          studentSector: student.sector,
           companyRequirements: companyRequirements,
         });
         setFeedback(result.feedback);
@@ -46,7 +49,7 @@ export default function UnmatchedStudentCard({ student }: UnmatchedStudentCardPr
                 <CardTitle className="flex items-center gap-2">
                     <User className="h-5 w-5" /> {student.name}
                 </CardTitle>
-                <CardDescription>{student.location}</CardDescription>
+                <CardDescription>{student.location} - Prefers {student.sector}</CardDescription>
             </div>
              <Badge
                 variant={

@@ -12,8 +12,17 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateSkillGapFeedbackInputSchema = z.object({
-  studentSkills: z.string().describe("A comma-separated list of the student's skills."),
-  companyRequirements: z.string().describe('A summary of all available companies and their required skills.'),
+  studentSkills: z
+    .string()
+    .describe("A comma-separated list of the student's skills."),
+  studentSector: z
+    .string()
+    .describe("The student's preferred internship sector."),
+  companyRequirements: z
+    .string()
+    .describe(
+      'A summary of all available companies and their required skills, organized by sector.'
+    ),
 });
 export type GenerateSkillGapFeedbackInput = z.infer<
   typeof GenerateSkillGapFeedbackInputSchema
@@ -22,7 +31,9 @@ export type GenerateSkillGapFeedbackInput = z.infer<
 const GenerateSkillGapFeedbackOutputSchema = z.object({
   feedback: z
     .string()
-    .describe('Constructive feedback for the student, suggesting 2-3 specific skills to learn to improve their chances next time.'),
+    .describe(
+      'Constructive feedback for the student, suggesting 2-3 specific skills to learn to improve their chances next time.'
+    ),
 });
 export type GenerateSkillGapFeedbackOutput = z.infer<
   typeof GenerateSkillGapFeedbackOutputSchema
@@ -39,19 +50,22 @@ const prompt = ai.definePrompt({
   input: {schema: GenerateSkillGapFeedbackInputSchema},
   output: {schema: GenerateSkillGapFeedbackOutputSchema},
   prompt: `You are an expert career advisor providing feedback to a student who was not matched with an internship.
-Your goal is to provide encouraging and constructive feedback.
+Your goal is to provide encouraging and constructive feedback tailored to their preferred sector.
 
-Analyze the student's skills and compare them against the required skills for all available internships.
-Identify the key skills the student is missing for the available roles.
-Suggest 2-3 specific skills the student could learn to be a stronger candidate in the future. Keep the feedback concise and to one sentence.
+Analyze the student's skills and compare them against the required skills for internships in their chosen sector.
+Identify the key skills the student is missing for roles in that specific domain.
+Suggest 2-3 specific skills the student could learn to be a stronger candidate in the future for their chosen sector. Keep the feedback concise and to one sentence.
 
 Student's Skills:
 {{{studentSkills}}}
 
-Available Internship Requirements:
+Student's Preferred Sector:
+{{{studentSector}}}
+
+Available Internship Requirements (by sector):
 {{{companyRequirements}}}
 
-Example feedback: "To better align with available roles, consider learning Data Science and Tableau to complement your existing Python and SQL skills."
+Example feedback: "To better align with roles in the IT sector, consider learning Data Science and Tableau to complement your existing Python and SQL skills."
 `,
 });
 
