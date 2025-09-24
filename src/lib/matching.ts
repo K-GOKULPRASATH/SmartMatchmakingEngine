@@ -74,17 +74,11 @@ export function runMatchingAlgorithm(students: Student[], companies: Company[]):
     idf.set(token, Math.log(allSkillsDocs.length / (1 + docsWithToken)));
   });
 
-  const shortlists: CompanyShortlist[] = [];
-  let totalShortlisted = 0;
-  let scStPwdShortlisted = 0;
-  let ruralShortlisted = 0;
-
-  companies.forEach(company => {
-    const companySkillSet = getSkillSet(company.req);
-    const allMatches: MatchResult[] = [];
-
-    students.forEach(student => {
+  const allPossibleMatches: MatchResult[] = [];
+  students.forEach(student => {
+    companies.forEach(company => {
       const studentSkillSet = getSkillSet(student.skills);
+      const companySkillSet = getSkillSet(company.req);
       
       const jaccardSimilarity = calculateJaccardSimilarity(studentSkillSet, companySkillSet);
       const cosineSimilarity = calculateCosineSimilarity(student.skills, company.req, allSkillsDocs, idf);
@@ -93,7 +87,7 @@ export function runMatchingAlgorithm(students: Student[], companies: Company[]):
       
       const finalScore = (0.6 * cosineSimilarity) + (0.3 * jaccardSimilarity) + fairnessBoost;
 
-      allMatches.push({
+      allPossibleMatches.push({
         student,
         company,
         cosineSimilarity,
@@ -102,27 +96,35 @@ export function runMatchingAlgorithm(students: Student[], companies: Company[]):
         finalScore
       });
     });
-
-    allMatches.sort((a, b) => b.finalScore - a.finalScore);
-    const shortlistSize = company.capacity * 3; // Shortlist 3x capacity
-    const topMatches = allMatches.slice(0, shortlistSize);
-    
-    shortlists.push({
-      company,
-      matches: topMatches,
-    });
-
-    topMatches.forEach(match => {
-        totalShortlisted++;
-        if (['SC', 'ST', 'PwD'].includes(match.student.category)) {
-            scStPwdShortlisted++;
-        }
-        if (match.student.isRural) {
-            ruralShortlisted++;
-        }
-    });
   });
+
+  // Sort all possible matches by final score in descending order
+  allPossibleMatches.sort((a, b) => b.finalScore - a.finalScore);
+
+  const matchedStudentIds = new Set<string>();
+  const companyAssignments: { [companyId: string]: MatchResult[] } = {};
+  companies.forEach(c => companyAssignments[c.id] = []);
+
+  for (const match of allPossibleMatches) {
+    const { student, company } = match;
+    if (!matchedStudentIds.has(student.id) && companyAssignments[company.id].length < company.capacity) {
+      companyAssignments[company.id].push(match);
+      matchedStudentIds.add(student.id);
+    }
+  }
+
+  const shortlists: CompanyShortlist[] = companies.map(company => ({
+    company,
+    matches: companyAssignments[company.id].sort((a, b) => b.finalScore - a.finalScore),
+  }));
+
+  const unmatchedStudents = students.filter(s => !matchedStudentIds.has(s.id));
   
+  const matchedStudents = students.filter(s => matchedStudentIds.has(s.id));
+  const scStPwdShortlisted = matchedStudents.filter(s => ['SC', 'ST', 'PwD'].includes(s.category)).length;
+  const ruralShortlisted = matchedStudents.filter(s => s.isRural).length;
+  const totalShortlisted = matchedStudents.length;
+
   const summary: SummaryMetrics = {
     totalShortlisted,
     scStPwdShortlisted,
@@ -131,5 +133,5 @@ export function runMatchingAlgorithm(students: Student[], companies: Company[]):
     ruralPercentage: totalShortlisted > 0 ? (ruralShortlisted / totalShortlisted) * 100 : 0,
   };
 
-  return { shortlists, summary };
+  return { shortlists, summary, unmatchedStudents };
 }

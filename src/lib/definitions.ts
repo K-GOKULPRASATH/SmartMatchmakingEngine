@@ -43,4 +43,5 @@ export interface SummaryMetrics {
 export interface AlgorithmResult {
   shortlists: CompanyShortlist[];
   summary: SummaryMetrics;
+  unmatchedStudents: Student[];
 }

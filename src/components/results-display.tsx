@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { AlgorithmResult, MatchResult, Company } from "@/lib/definitions";
+import type { AlgorithmResult, MatchResult, Company, Student } from "@/lib/definitions";
 import {
   Card,
   CardContent,
@@ -16,15 +16,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "./ui/badge";
-import { Award, BarChart3, ShieldCheck } from "lucide-react";
+import { Award, BarChart3, ShieldCheck, XCircle } from "lucide-react";
 import CandidateDetailModal from "./candidate-detail-modal";
+import UnmatchedStudentCard from "./unmatched-student-card";
 
 interface ResultsDisplayProps {
   result: AlgorithmResult;
 }
 
 export default function ResultsDisplay({ result }: ResultsDisplayProps) {
-  const { shortlists, summary } = result;
+  const { shortlists, summary, unmatchedStudents } = result;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<MatchResult | null>(null);
@@ -46,7 +47,7 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
               <CardTitle>AI Matching Results</CardTitle>
             </div>
             <CardDescription>
-              Generated shortlists and fairness metrics from the AI engine.
+              Generated assignments and fairness metrics from the AI engine.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -62,7 +63,7 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
                   {summary.scStPwdPercentage.toFixed(1)}%
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  of shortlisted candidates
+                  of matched candidates
                 </p>
               </CardContent>
             </Card>
@@ -78,7 +79,7 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
                   {summary.ruralPercentage.toFixed(1)}%
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  of shortlisted candidates
+                  of matched candidates
                 </p>
               </CardContent>
             </Card>
@@ -102,38 +103,67 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {shortlist.matches.map((match, index) => (
-                      <TableRow
-                        key={match.student.id}
-                        className="cursor-pointer"
-                        onClick={() => handleRowClick(match, shortlist.company)}
-                      >
-                        <TableCell className="font-medium">
-                          {index + 1}
-                        </TableCell>
-                        <TableCell>
-                          <div>{match.student.name}</div>
-                          {match.fairnessBoost > 0 && (
-                            <Badge
-                              variant="default"
-                              className="mt-1 bg-accent hover:bg-accent/90 text-accent-foreground"
-                            >
-                              <Award className="mr-1 h-3 w-3" />
-                              Fairness Boost
-                            </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="font-mono">
-                          {match.finalScore.toFixed(3)}
+                    {shortlist.matches.length > 0 ? (
+                      shortlist.matches.map((match, index) => (
+                        <TableRow
+                          key={match.student.id}
+                          className="cursor-pointer"
+                          onClick={() =>
+                            handleRowClick(match, shortlist.company)
+                          }
+                        >
+                          <TableCell className="font-medium">
+                            {index + 1}
+                          </TableCell>
+                          <TableCell>
+                            <div>{match.student.name}</div>
+                            {match.fairnessBoost > 0 && (
+                              <Badge
+                                variant="default"
+                                className="mt-1 bg-accent hover:bg-accent/90 text-accent-foreground"
+                              >
+                                <Award className="mr-1 h-3 w-3" />
+                                Fairness Boost
+                              </Badge>
+                            )}
+                          </TableCell>
+                          <TableCell className="font-mono">
+                            {match.finalScore.toFixed(3)}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={3} className="text-center text-muted-foreground">
+                          No candidates matched.
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
             </Card>
           ))}
         </div>
+
+        {unmatchedStudents && unmatchedStudents.length > 0 && (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <XCircle className="h-6 w-6 text-destructive" />
+                <CardTitle>Unmatched Candidates</CardTitle>
+              </div>
+              <CardDescription>
+                These candidates were not assigned an internship. AI-powered feedback is provided below.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {unmatchedStudents.map((student) => (
+                <UnmatchedStudentCard key={student.id} student={student} />
+              ))}
+            </CardContent>
+          </Card>
+        )}
       </div>
       <CandidateDetailModal
         match={selectedMatch}
