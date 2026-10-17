@@ -1,175 +1,46 @@
 # SmartMatchmakingEngine
 
-A TypeScript-based intelligent matchmaking engine that integrates with AI-MAT (Online Proctor Exam Platform) to match candidates with positions based on exam performance, skills assessment, and resume qualifications.
+SmartMatchmakingEngine is a project developed around a Smart India Hackathon (SIH) problem statement. It explores matching candidate profiles to role or opportunity requirements using multiple signals such as assessment performance, skills, and resume information.
 
-## Overview
+## Problem
 
-SmartMatchmakingEngine is an advanced algorithmic system designed to intelligently match exam takers with job opportunities by correlating:
+A single exam score or keyword match rarely captures a candidate's full fit for an opportunity. A matching workflow can compare several pieces of evidence and explain which factors influenced a recommendation.
 
-- Exam performance scores from AI-MAT proctored assessments
-- Technical skills verification through AI-powered evaluation
-- Resume qualifications and experience profile
-- Real-time candidate capability assessment
+## Proposed workflow
 
-The engine provides data-driven candidate-to-role matching that reduces recruitment time while ensuring quality placements.
+1. Collect candidate profile, skills, assessment results, and role requirements.
+2. Normalize and validate the available inputs.
+3. Extract or map skills from the candidate profile and resume.
+4. Score candidate-to-role fit using configurable factors.
+5. Rank potential matches and present the main reasons behind the ranking.
+6. Evaluate the results against representative cases and user feedback.
 
-## Problem Statement
+This is a project direction, not a claim that all stages are currently integrated or validated.
 
-Traditional recruitment processes fail to correlate candidate assessment scores with actual job requirements. SmartMatchmakingEngine bridges this gap by:
+## Relationship to AI-MAT
 
-- Utilizing real-time exam metrics from proctored environments
-- Implementing bias-free algorithmic matching
-- Providing transparent scoring and ranking systems
-- Enabling rapid identification of qualified candidates
+The repository describes AI-MAT assessment data as one potential input. The exact live integration should be confirmed against current code before being presented as deployed or end-to-end.
 
-## Project Structure
+## Technology
 
-```
-SmartMatchmakingEngine/
-├── src/
-│   ├── ai/                       - AI and ML models integration
-│   ├── components/               - React UI components
-│   ├── app/                      - Next.js application pages
-│   ├── lib/                      - Utility functions and helpers
-│   └── types/                    - TypeScript type definitions
-├── public/                       - Static assets
-├── tests/                        - Unit and integration tests
-├── .env.example                  - Environment configuration template
-├── package.json                  - Project dependencies
-├── tsconfig.json                 - TypeScript configuration
-├── next.config.js                - Next.js configuration
-└── README.md                     - This file
-```
+The README and project files describe a TypeScript/Next.js application with Genkit and Firebase-related integrations. Confirm the exact dependency and service usage in the current source before treating every listed technology as active.
 
-## Key Features
+## Responsible matching
 
-### Integration with AI-MAT Platform
+- Do not use protected or sensitive attributes as hidden ranking signals.
+- Explain the main factors behind a recommendation.
+- Test for disparate outcomes and data-quality problems.
+- Keep a human review path for consequential decisions.
+- Treat ranking as decision support, not a definitive judgment of a person's ability.
 
-SmartMatchmakingEngine receives candidate data from AI-MAT including:
+## Validation checklist
 
-- Exam completion with full-screen monitoring verification
-- Webcam and microphone validation during assessment
-- Room scan confirmation and device orientation verification
-- Candidate photograph capture for identity verification
-- Real-time score calculation from exam responses
+- Document the SIH problem statement and acceptance criteria.
+- Add representative examples with expected ranking behavior.
+- Test missing, inconsistent, and manipulated input data.
+- Measure usefulness and failure cases before claiming accuracy or bias reduction.
+- Record the author's personal contribution and any team contributions.
 
-### Intelligent Matching Algorithm
+## Repository
 
-- Multi-factor scoring system combining exam performance and profile metrics
-- Resume parsing and skill extraction
-- Score correlation and candidate ranking
-- Automated candidate-to-role mapping
-- Customizable weighting for different position types
-
-### Data Processing
-
-- Extract exam scores from AI-MAT assessments
-- Parse resume documents for skill identification
-- Cross-reference exam performance with job requirements
-- Generate confidence scores for each match
-- Produce ranked candidate recommendations
-
-### Analytics and Reporting
-
-- Match success rate metrics
-- Candidate performance distribution analysis
-- Position-specific candidate pool insights
-- Placement trend visualization
-- Recruitment funnel tracking
-
-## Tech Stack
-
-Frontend and Application Framework:
-- Next.js 15.3+ - React framework with server-side rendering
-- React 18.3+ - UI component library
-- TypeScript 5 - Type-safe JavaScript
-
-AI and Machine Learning:
-- Genkit 1.14+ - Google's unified AI framework
-- Google Generative AI - Advanced NLP and analysis
-- Google AI integration for intelligent text processing
-
-User Interface:
-- Tailwind CSS 3.4+ - Utility-first CSS framework
-- Radix UI - Unstyled, accessible component primitives
-- shadcn/ui - Pre-built component library
-- Lucide React - Icon system
-
-Forms and Data Validation:
-- React Hook Form 7.54+ - Efficient form state management
-- Zod 3.24+ - TypeScript-first schema validation
-
-Data Visualization:
-- Recharts 2.15+ - Composable charting library
-- Date-fns 3.6+ - Date utility functions
-
-Backend and Services:
-- Firebase 11.9+ - Authentication, database, and hosting
-- dotenv - Environment variable management
-
-Development Tools:
-- Genkit CLI - AI framework command-line tools
-- PostCSS 8 - CSS transformation
-- TSC - TypeScript compiler
-
-## Integration with AI-MAT
-
-SmartMatchmakingEngine receives real-time data from AI-MAT proctored exams:
-
-1. Candidate completes exam in AI-MAT with full proctoring
-2. System verifies:
-   - Full-screen mode engagement
-   - Camera and microphone operational status
-   - Room environment scan completion
-   - Identity verification through photograph
-   - PC orientation validation
-3. Upon exam completion, score and metadata transmitted to engine
-4. Engine matches exam performance against job positions
-5. Candidates receive personalized opportunity recommendations
-
-## Data Flow Diagram
-
-```
-AI-MAT Platform
-    |
-    | (Exam Score + Metrics)
-    |
-    v
-Input Processing
-    |
-    +-- Score Normalization
-    +-- Skills Extraction
-    +-- Resume Parsing
-    |
-    v
-Matching Algorithm
-    |
-    +-- Multi-factor Scoring
-    +-- Ranking Computation
-    +-- Confidence Calculation
-    |
-    v
-Output Generation
-    |
-    +-- Ranked Matches
-    +-- Detailed Reports
-    +-- Recommendations
-    |
-    v
-User Interface Display
-```
-
-## License
-
-This project is open source and available under the MIT License.
-
-## Contact and Support
-
-For questions, suggestions, or support regarding SmartMatchmakingEngine:
-
-Developer: K-GOKULPRASATH
-GitHub Profile: https://github.com/K-GOKULPRASATH
-
-Repository: https://github.com/K-GOKULPRASATH/SmartMatchmakingEngine
-Related Project (AI-MAT): https://github.com/K-GOKULPRASATH/AI-MAT
-
+https://github.com/K-GOKULPRASATH/SmartMatchmakingEngine
